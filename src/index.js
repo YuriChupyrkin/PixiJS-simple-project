@@ -20,6 +20,7 @@ function runPixiApp() {
     .add(Constants.AUSTIN, 'Austin.png')
     .add(Constants.STAIR, 'stair.png')
     .add(Constants.LOGO, 'logo.png')
+    .add(Constants.CONTINUE_BUTTON, 'btn.png')
     .add(Constants.GLOBE, 'globe.png')
     .add(Constants.PLANT, 'plant.png')
     .add(Constants.BOOK_STAND, 'book_stand.png')
@@ -38,7 +39,7 @@ function runPixiApp() {
 }
 
 function onLoadingCompleted() {
-  var game = new Game(app);
+  const game = new Game(app);
   game.run();
 }
 

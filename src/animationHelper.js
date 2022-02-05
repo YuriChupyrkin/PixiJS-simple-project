@@ -66,3 +66,25 @@ export function changePositionAsync(sprite, newPosition, duration, animation = '
     });
   });
 }
+
+export function pulseAsync(sprite, duration, animation = 'easeInOutQuad') {
+  const position = ease.add(
+    sprite,
+    {
+      height: sprite.height * 0.9,
+      width: sprite.width * 0.9,
+    },
+    {
+      repeat: true,
+      reverse: true,
+      duration: duration,
+      ease: animation
+    }
+  );
+
+  return new Promise((resolve, reject) => {
+    position.once('complete', () => {
+      resolve();
+    });
+  });
+}

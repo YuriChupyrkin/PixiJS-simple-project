@@ -12,6 +12,7 @@ export class Game {
     this.austin;
     this.stair;
     this.okButton;
+    this.continueButton;
 
     this.selectedStair;
 
@@ -43,24 +44,30 @@ export class Game {
     this.addStageChild(this.stair);
 
     this.newStairs = Object.values(this.stairIconMap).map(newStairName => {
-      var newStair = this.spriteBuilder.createNewStair(newStairName, false);
+      const newStair = this.spriteBuilder.createNewStair(newStairName, false);
       this.addStageChild(newStair);
       return newStair;
     });
 
     this.starIconContainers = Object.keys(this.stairIconMap).map(starIconName => {
-      var stairIconContainer = this.spriteBuilder.createStairIconSprite(starIconName, false);
+      const stairIconContainer = this.spriteBuilder.createStairIconSprite(starIconName, false);
       this.addStageChild(stairIconContainer);
       return stairIconContainer;
     });
   
     this.hammer = this.spriteBuilder.createSprite(Constants.HAMMER);
+    this.hammer.visible = false;
     this.addStageChild(this.hammer);
 
     this.okButton = this.spriteBuilder.createSprite(Constants.OK_BUTTON, false);
     this.addStageChild(this.okButton);
 
+    this.continueButton = this.spriteBuilder.createSprite(Constants.CONTINUE_BUTTON);
+    this.continueButton.anchor.set(0.5);
+    this.addStageChild(this.continueButton);
+
     this.handleEvents();
+    this.runAnimations();
   }
 
   handleEvents() {
@@ -78,6 +85,14 @@ export class Game {
         await AnimationHelper.fadeInAsync(stairContainer, 300);
       });
     });
+  }
+
+  runAnimations() {
+    setTimeout(async () => {
+      await AnimationHelper.fadeInAsync(this.hammer, 500);
+    }, 1500);
+    
+    AnimationHelper.pulseAsync(this.continueButton, 700);
   }
 
   async onStairIconSelectedAsync(selectedIconContainer) {

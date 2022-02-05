@@ -18,4 +18,5 @@ export default {
   NEW_STAIR_2: 'newStair2',
   NEW_STAIR_3: 'newStair3',
   NEW_STAIR: 'newStair',
+  CONTINUE_BUTTON: 'continueButton',
 };
