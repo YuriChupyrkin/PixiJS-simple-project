@@ -45,7 +45,7 @@ export function fadeOutAsync(sprite, duration, animation = 'easeInOutQuad') {
 }
 
 export function changePositionAsync(sprite, newPosition, duration, animation = 'easeInOutQuad') {
-  const position = ease.add(
+  const changePositionAnimation = ease.add(
     sprite,
     {
       position: {
@@ -61,14 +61,14 @@ export function changePositionAsync(sprite, newPosition, duration, animation = '
   );
 
   return new Promise((resolve, reject) => {
-    position.once('complete', () => {
+    changePositionAnimation.once('complete', () => {
       resolve();
     });
   });
 }
 
 export function pulseAsync(sprite, duration, animation = 'easeInOutQuad') {
-  const position = ease.add(
+  const pulseAnimation = ease.add(
     sprite,
     {
       height: sprite.height * 0.9,
@@ -83,14 +83,14 @@ export function pulseAsync(sprite, duration, animation = 'easeInOutQuad') {
   );
 
   return new Promise((resolve, reject) => {
-    position.once('complete', () => {
+    pulseAnimation.once('complete', () => {
       resolve();
     });
   });
 }
 
 export function pushAwayAsync(sprite, newPosition, duration, animation = 'easeInOutQuad') {
-  const pushAway = ease.add(
+  const pushAwayAnimation = ease.add(
     sprite,
     {
       position: {
@@ -107,7 +107,7 @@ export function pushAwayAsync(sprite, newPosition, duration, animation = 'easeIn
   );
 
   return new Promise((resolve, reject) => {
-    pushAway.once('complete', () => {
+    pushAwayAnimation.once('complete', () => {
       resolve();
     });
   });

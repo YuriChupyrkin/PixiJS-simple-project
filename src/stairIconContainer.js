@@ -1,7 +1,7 @@
 import { Container } from '@pixi/display';
-import { GameSprite } from './gameSprite';
+import GameSprite from './gameSprite.js'
 
-export class StairIconContainer extends Container {
+export default class StairIconContainer extends Container {
   constructor(x, y, texture, backgroundTexture, activeBackgroundTexture, name) {
     super();
 

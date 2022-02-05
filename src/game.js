@@ -1,38 +1,41 @@
 import { getPositionByName } from './spritePositions';
 
 import * as AnimationHelper from './animationHelper';
-import { SpriteBuilder } from './spriteBuilder';
+import SpriteBuilder from './spriteBuilder';
 import Constants from './constants';
 
-export class Game {
+export default class Game {
   constructor(app) {
     this.app = app;
-    this.background;
     this.hammer;
-    this.austin;
-    this.stair;
     this.okButton;
     this.continueButton;
 
     this.selectedStair;
+
+    this.starIconContainers = [];
+    this.newStairs = [];
+
+    this.spriteBuilder = new SpriteBuilder(app);
 
     this.stairIconMap = {
       [Constants.STAIR_ICON_1]: Constants.NEW_STAIR_1,
       [Constants.STAIR_ICON_2]: Constants.NEW_STAIR_2,
       [Constants.STAIR_ICON_3]: Constants.NEW_STAIR_3,
     };
+  }
 
-    this.starIconContainers = [];
-    this.newStairs = [];
-
-    this.spriteBuilder = new SpriteBuilder(app);
+  run() {
+    this.drawScene();
+    this.subsribe();
+    this.runAnimations();
   }
 
   addStageChild(sprite) {
     this.app.stage.addChild(sprite);
   }
 
-  run() {
+  drawScene() {
     this.addStageChild(this.spriteBuilder.createSprite(Constants.BACKGROUND));
     this.tableContainer = this.spriteBuilder.createTableContainer();
     this.addStageChild(this.tableContainer);
@@ -40,9 +43,9 @@ export class Game {
     this.addStageChild(this.spriteBuilder.createSprite(Constants.AUSTIN));
     this.addStageChild(this.spriteBuilder.createSprite(Constants.LOGO));
 
-    this.stair = this.spriteBuilder.createSprite(Constants.STAIR);
-    this.selectedStair = this.stair;
-    this.addStageChild(this.stair);
+    const stair = this.spriteBuilder.createSprite(Constants.STAIR);
+    this.selectedStair = stair;
+    this.addStageChild(stair);
 
     this.newStairs = Object.values(this.stairIconMap).map(newStairName => {
       const newStair = this.spriteBuilder.createNewStair(newStairName, false);
@@ -63,15 +66,11 @@ export class Game {
     this.okButton = this.spriteBuilder.createSprite(Constants.OK_BUTTON, false);
     this.addStageChild(this.okButton);
 
-    this.continueButton = this.spriteBuilder.createSprite(Constants.CONTINUE_BUTTON);
-    this.continueButton.anchor.set(0.5);
+    this.continueButton = this.spriteBuilder.createSprite(Constants.CONTINUE_BUTTON, true, 0.5);
     this.addStageChild(this.continueButton);
-
-    this.handleEvents();
-    this.runAnimations();
   }
 
-  handleEvents() {
+  subsribe() {
     this.okButton.onPointerDown(() => this.selectStairAsync());
 
     this.starIconContainers.forEach(stairContainer => {
@@ -82,15 +81,15 @@ export class Game {
 
     this.hammer.onPointerDown(async () => {
       await AnimationHelper.fadeOutAsync(this.hammer, 500);
-      this.starIconContainers.forEach(async (stairContainer) => {
-        await AnimationHelper.fadeInAsync(stairContainer, 300);
+      this.starIconContainers.forEach((stairContainer) => {
+        AnimationHelper.fadeInAsync(stairContainer, 300);
       });
     });
   }
 
   runAnimations() {
-    setTimeout(async () => {
-      await AnimationHelper.fadeInAsync(this.hammer, 500);
+    setTimeout(() => {
+      AnimationHelper.fadeInAsync(this.hammer, 500);
     }, 1500);
     
     AnimationHelper.pulseAsync(this.continueButton, 700);
@@ -132,6 +131,6 @@ export class Game {
     this.starIconContainers.forEach(stairContainer => stairContainer.visible = false);
     this.okButton.visible = false;
     await this.tableContainer.pushPlantAsync(1000);
-    alert('Godd Job!');
+    alert('Good Job!');
   }
 }

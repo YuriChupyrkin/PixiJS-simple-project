@@ -1,18 +1,19 @@
-import { GameSprite } from './gameSprite.js'
-import { TableItemsContainer } from './tableItemsContainer';
-import { StairIconContainer } from './stairIconContainer';
 import { getPositionByName } from './spritePositions';
+import StairIconContainer from './stairIconContainer';
+import GameSprite from './gameSprite.js'
 import Constants from './constants';
+import TableItemsContainer from './tableItemsContainer';
 
-export class SpriteBuilder {
+export default class SpriteBuilder {
   constructor(app) {
     this.app = app;
   }
 
-  createSprite(name, visibility = true) {
+  createSprite(name, visibility = true, anchor = 0) {
     const position = getPositionByName(name);
     const sprite = new GameSprite(position.x, position.y, this.getTexture(name), name);
     sprite.visible = visibility;
+    sprite.anchor.set(anchor);
     return sprite;
   };
 

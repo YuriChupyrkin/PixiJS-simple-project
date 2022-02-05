@@ -1,19 +1,25 @@
 import { Container } from '@pixi/display';
-import { GameSprite } from './gameSprite';
 import * as AnimationHelper from './animationHelper';
 import Constants from './constants';
+import GameSprite from './gameSprite.js'
 
-export class TableItemsContainer extends Container {
+export default class TableItemsContainer extends Container {
   constructor(x, y, tableTexture, bookStandTexture, globeTexture, plantTexture) {
     super();
 
     this.tableX = x;
     this.tableY = y;
 
+    const globeX = x + 110;
+    const globeY = y - 90;
+    const bookStandY = y - 70;
+    const plantX = x + 60;
+    const plantY = y - 25;
+
     const table = new GameSprite(x, y, tableTexture, Constants.TABLE);
-    this.globe = new GameSprite(x + 110, y - 90, globeTexture, Constants.GLOBE);
-    this.bookStand = new GameSprite(x, y - 70, bookStandTexture, Constants.BOOK_STAND);
-    this.plant = new GameSprite(x + 60, y - 25, plantTexture, Constants.PLANT);
+    this.globe = new GameSprite(globeX, globeY, globeTexture, Constants.GLOBE);
+    this.bookStand = new GameSprite(x, bookStandY, bookStandTexture, Constants.BOOK_STAND);
+    this.plant = new GameSprite(plantX, plantY, plantTexture, Constants.PLANT);
 
     this.addChild(table);
     this.addChild(this.globe);
