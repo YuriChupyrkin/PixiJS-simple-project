@@ -2,9 +2,9 @@ const path = require('path');
 
 module.exports = {
   entry: './src/index.js',
-  watch: true,
+  watch: false,
   optimization: {
-    minimize: false
+    minimize: true,
   },
   output: {
     filename: 'main.js',
