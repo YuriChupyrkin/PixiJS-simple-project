@@ -11,5 +11,5 @@ export const SpritePositions = {
 };
 
 export function getPositionByName(spriteName) {
-  return SpritePositions[spriteName];
+  return SpritePositions[spriteName] ||  { x: 0, y: 0 };
 }

@@ -1,6 +1,9 @@
 import { Ease, ease } from 'pixi-ease'
+import { settings } from '@pixi/settings';
 import { GameSprite } from './gameSprite.js'
+import { Container } from '@pixi/display';
 import { SpritePositions, getPositionByName } from './spritePositions';
+import { StairIconContainer } from './stairIconContainer';
 import * as AnimationHelper from './animationHelper';
 
 export class Game {
@@ -16,75 +19,99 @@ export class Game {
     this.newStair3;
 
     this.selectedStair;
+
+
+    this.stairIconMap = {
+      'stairIcon1': 'newStair1',
+      'stairIcon2': 'newStair2',
+      'stairIcon3': 'newStair3',
+    };
+
+    this.starIconContainers = [];
+    this.newStairs = [];
   }
 
   getTexture(name) {
     return this.resources[name].texture;
   }
 
-  createAndAddSprite(position, textureName, visibility = true) {
-    const sprite = new GameSprite(position.x, position.y, this.getTexture(textureName));
+  createAndAddNewStair(name, visibility = true) {
+    const appearedNewStairPos = getPositionByName('appearedNewStair');
+    const newStair = this.createAndAddSprite(name, visibility);
+    newStair.x = appearedNewStairPos.x;
+    newStair.y = appearedNewStairPos.y;
+    return newStair;
+  }
+
+  createAndAddSprite(name, visibility = true) {
+    const position = getPositionByName(name);
+    const sprite = new GameSprite(position.x, position.y, this.getTexture(name), name);
     sprite.visible = visibility;
     this.app.stage.addChild(sprite);
     return sprite;
   }
 
-  createAndAddStairIconSprite(position, textureName, visibility = true) {
-    const stairContainer = new GameSprite(position.x, position.y, this.getTexture('stairIconContainer'));
-    const stairIcon = new GameSprite(28, 0, this.getTexture(textureName));
-    stairContainer.visible = visibility;
+  createAndAddStairIconSprite(name, visibility = true) {
+    const position = getPositionByName(name);
+    const background = this.getTexture('stairIconBackground');
+    const activeBackground = this.getTexture('activeStairIconBackground');
+    const container = new StairIconContainer(
+      position.x,
+      position.y,
+      this.getTexture(name),
+      background,
+      activeBackground,
+      name);
 
-    stairContainer.addChild(stairIcon);
-    this.app.stage.addChild(stairContainer);
-    return stairContainer;
+    container.visible = visibility;
+    this.app.stage.addChild(container);
+
+    return container;
   }
 
   setup() {
-    const appearedNewStairPos = getPositionByName('appearedNewStair');
-
-    this.background = this.createAndAddSprite(getPositionByName('background'), 'background');
-    this.austin = this.createAndAddSprite(getPositionByName('austin'), 'austin');
-    this.stair = this.createAndAddSprite(getPositionByName('stair'), 'stair');
-    this.newStair1 = this.createAndAddSprite(appearedNewStairPos, 'newStair1', false);
-    this.newStair2 = this.createAndAddSprite(appearedNewStairPos, 'newStair2', false);
-    this.newStair3 = this.createAndAddSprite(appearedNewStairPos, 'newStair3', false);
-    this.stairIcon1 = this.createAndAddStairIconSprite(getPositionByName('stairIcon1'), 'stairIcon1', false);
-    this.stairIcon2 = this.createAndAddStairIconSprite(getPositionByName('stairIcon2'), 'stairIcon2', false);
-    this.stairIcon3 = this.createAndAddStairIconSprite(getPositionByName('stairIcon3'), 'stairIcon3', false);
-
+    this.background = this.createAndAddSprite('background');
+    this.austin = this.createAndAddSprite('austin');
+    this.stair = this.createAndAddSprite('stair');
     this.selectedStair = this.stair;
 
-    this.hammer = this.createAndAddSprite(getPositionByName('hammer'), 'hammer');
+    this.newStairs = Object.values(this.stairIconMap).map(newStairName =>
+      this.createAndAddNewStair(newStairName, false));
 
+    this.starIconContainers = Object.keys(this.stairIconMap).map(starIconName =>
+      this.createAndAddStairIconSprite(starIconName, false));
 
-    this.stairIcon1.onPointerDown(() => this.selectStairAsync(this.newStair1));
-    this.stairIcon2.onPointerDown(() => this.selectStairAsync(this.newStair2));
-    this.stairIcon3.onPointerDown(() => this.selectStairAsync(this.newStair3));
+    this.starIconContainers.forEach(stairContainer => {
+      stairContainer.onPointerDown(() => {
+        this.onStairIconSelectedAsync(stairContainer);
+      });
+    });
+
+    this.hammer = this.createAndAddSprite('hammer');
 
     this.hammer.onPointerDown(async () => {
       await AnimationHelper.fadeOutAsync(this.hammer, 500);
-      await AnimationHelper.fadeInAsync(this.stairIcon1, 300);
-      await AnimationHelper.fadeInAsync(this.stairIcon2, 300);
-      await AnimationHelper.fadeInAsync(this.stairIcon3, 300);
-
-      // await AnimationHelper.fadeOutAsync(this.stair, 3000);
-      // await AnimationHelper.fadeInAsync(this.newStair1, 1000);
-
-      // const newStairPos = getPositionByName('newStair');
-      // await AnimationHelper.changePositionAsync(this.newStair1, newStairPos, 500);
+      this.starIconContainers.forEach(async (stairContainer) => {
+        await AnimationHelper.fadeInAsync(stairContainer, 300);
+      });
     });
   }
 
-  async selectStairAsync(selectedStair) {
-      const preStair = this.selectedStair;
-      this.selectedStair = selectedStair;
-      await AnimationHelper.fadeOutAsync(preStair, 200);
-      await AnimationHelper.fadeInAsync(selectedStair, 200);
+  async onStairIconSelectedAsync(selectedIconContainer) {
+    this.starIconContainers.forEach(iconContainer => iconContainer.deactivate());
+    selectedIconContainer.activate();
 
-      const newStairPos = getPositionByName('newStair');
-      await AnimationHelper.changePositionAsync(selectedStair, newStairPos, 200);
+    const prevStair = this.selectedStair;
+    const selectedStairName = this.stairIconMap[selectedIconContainer.name];
+    const selectedStair = this.newStairs.filter(stair => stair.name == selectedStairName)[0];
+    this.selectedStair = selectedStair;
+
+    await AnimationHelper.fadeOutAsync(prevStair, 200);
+    await AnimationHelper.fadeInAsync(selectedStair, 200);
+
+    const newStairPos = getPositionByName('newStair');
+    await AnimationHelper.changePositionAsync(selectedStair, newStairPos, 200);
   }
-
 
   hideOptions() {
     this.changeVisibility(this.optionA, false);
@@ -95,5 +122,4 @@ export class Game {
   changeVisibility(sprite, visibility) {
     sprite.visible = visibility;
   }
-
 }
