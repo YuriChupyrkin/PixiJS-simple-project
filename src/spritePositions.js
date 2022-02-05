@@ -3,7 +3,6 @@ export const SpritePositions = {
   austin: { x: 800, y: 100 },
   hammer: { x: 1070, y: 250 },
   stair: { x: 830, y: 80 },
-  appearedNewStair: { x: 910, y: -100},
   newStair: { x: 910, y: 20},
   stairIcon1: { x: 820, y: 240 },
   stairIcon2: { x: 950, y: 160 },

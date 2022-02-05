@@ -36,10 +36,10 @@ export class Game {
   }
 
   createAndAddNewStair(name, visibility = true) {
-    const appearedNewStairPos = getPositionByName('appearedNewStair');
+    const newStairPos = getPositionByName('newStair');
     const newStair = this.createAndAddSprite(name, visibility);
-    newStair.x = appearedNewStairPos.x;
-    newStair.y = appearedNewStairPos.y;
+    newStair.x = newStairPos.x;
+    newStair.y = newStairPos.y;
     return newStair;
   }
 
@@ -104,6 +104,7 @@ export class Game {
     const prevStair = this.selectedStair;
     const selectedStairName = this.stairIconMap[selectedIconContainer.name];
     const selectedStair = this.newStairs.filter(stair => stair.name == selectedStairName)[0];
+    selectedStair.y = -100;
     this.selectedStair = selectedStair;
 
     await AnimationHelper.fadeOutAsync(prevStair, 200);
