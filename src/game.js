@@ -8,6 +8,7 @@ export default class Game {
   constructor(app) {
     this.app = app;
     this.hammer;
+    this.austin;
     this.okButton;
     this.continueButton;
 
@@ -37,10 +38,10 @@ export default class Game {
 
   drawScene() {
     this.addStageChild(this.spriteBuilder.createSprite(Constants.BACKGROUND));
+
     this.tableContainer = this.spriteBuilder.createTableContainer();
     this.addStageChild(this.tableContainer);
 
-    this.addStageChild(this.spriteBuilder.createSprite(Constants.AUSTIN));
     this.addStageChild(this.spriteBuilder.createSprite(Constants.LOGO));
 
     const stair = this.spriteBuilder.createSprite(Constants.STAIR);
@@ -52,6 +53,9 @@ export default class Game {
       this.addStageChild(newStair);
       return newStair;
     });
+
+    this.austin = this.spriteBuilder.createSprite(Constants.AUSTIN);
+    this.addStageChild(this.austin);
 
     this.starIconContainers = Object.keys(this.stairIconMap).map(starIconName => {
       const stairIconContainer = this.spriteBuilder.createStairIconSprite(starIconName, false);
@@ -71,18 +75,13 @@ export default class Game {
   }
 
   subsribe() {
-    this.okButton.onPointerDown(() => this.selectStairAsync());
+    this.okButton.onPointerDown(() => this.onSelectStairAsync());
+    this.hammer.onPointerDown(async () => this.onHammerClickAsync());
+    this.continueButton.onPointerDown(() => this.onContinueClickAsync());
 
     this.starIconContainers.forEach(stairContainer => {
       stairContainer.onPointerDown(() => {
         this.onStairIconSelectedAsync(stairContainer);
-      });
-    });
-
-    this.hammer.onPointerDown(async () => {
-      await AnimationHelper.fadeOutAsync(this.hammer, 500);
-      this.starIconContainers.forEach((stairContainer) => {
-        AnimationHelper.fadeInAsync(stairContainer, 300);
       });
     });
   }
@@ -127,10 +126,33 @@ export default class Game {
     return this.newStairs.filter(stair => stair.name == selectedStairName)[0];
   }
 
-  async selectStairAsync() {
-    this.starIconContainers.forEach(stairContainer => stairContainer.visible = false);
-    this.okButton.visible = false;
+  async onHammerClickAsync() {
+    await AnimationHelper.fadeOutAsync(this.hammer, 500);
+    this.starIconContainers.forEach((stairContainer) => {
+      AnimationHelper.fadeInAsync(stairContainer, 300);
+    });
+  }
+
+  async onSelectStairAsync() {
+    this.hideButtons();
+
+    await AnimationHelper.changePositionAsync(this.austin, {x: 1500, y: -250}, 1000, 'easeInExpo');
     await this.tableContainer.pushPlantAsync(1000);
     alert('Good Job!');
+  }
+
+  async onContinueClickAsync() {
+    this.hideButtons();
+    await AnimationHelper.changePositionAsync(this.austin, {x: -100, y: this.austin.y }, 1000, 'easeOutSine');
+    await this.tableContainer.pushPlantAsync(1000);
+
+    alert('Wasted!');
+  }
+
+  hideButtons() {
+    this.starIconContainers.forEach(stairContainer => stairContainer.visible = false);
+    this.okButton.visible = false;
+    this.hammer.visible = false;
+    this.continueButton.visible = false;
   }
 }
