@@ -1,12 +1,12 @@
 export const SpritePositions = {
   background: { x: 0, y: 0 },
   austin: { x: 800, y: 100 },
-  hammer: { x: 1070, y: 250 },
+  hammer: { x: 940, y: 380 },
   stair: { x: 830, y: 80 },
   newStair: { x: 910, y: 20},
-  stairIcon1: { x: 820, y: 240 },
-  stairIcon2: { x: 950, y: 160 },
-  stairIcon3: { x: 1100, y: 120 },
+  stairIcon1: { x: 740, y: 360 },
+  stairIcon2: { x: 900, y: 260 },
+  stairIcon3: { x: 1080, y: 240 },
 };
 
 export function getPositionByName(spriteName) {

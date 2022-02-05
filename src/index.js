@@ -20,6 +20,7 @@ function runPixiApp() {
     .add('background', 'back.png')
     .add('austin', 'Austin.png')
     .add('stair', 'stair.png')
+    .add('okButton', 'ok.png')
     .add('stairIcon1', 'stair_icon_01.png')
     .add('stairIcon2', 'stair_icon_02.png')
     .add('stairIcon3', 'stair_icon_03.png')

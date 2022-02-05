@@ -1,25 +1,18 @@
-import { Ease, ease } from 'pixi-ease'
-import { settings } from '@pixi/settings';
 import { GameSprite } from './gameSprite.js'
-import { Container } from '@pixi/display';
-import { SpritePositions, getPositionByName } from './spritePositions';
+import { getPositionByName } from './spritePositions';
 import { StairIconContainer } from './stairIconContainer';
 import * as AnimationHelper from './animationHelper';
 
 export class Game {
   constructor(app) {
     this.app = app;
-    this.resources = this.app.loader.resources;
     this.background;
     this.hammer;
     this.austin;
     this.stair;
-    this.newStair1;
-    this.newStair2;
-    this.newStair3;
+    this.okButton;
 
     this.selectedStair;
-
 
     this.stairIconMap = {
       'stairIcon1': 'newStair1',
@@ -32,7 +25,7 @@ export class Game {
   }
 
   getTexture(name) {
-    return this.resources[name].texture;
+    return this.app.loader.resources[name].texture;
   }
 
   createAndAddNewStair(name, visibility = true) {
@@ -81,13 +74,16 @@ export class Game {
     this.starIconContainers = Object.keys(this.stairIconMap).map(starIconName =>
       this.createAndAddStairIconSprite(starIconName, false));
 
+    this.hammer = this.createAndAddSprite('hammer');
+    this.okButton = this.createAndAddSprite('okButton', false);
+
+    this.okButton.onPointerDown(() => this.selectStair());
+
     this.starIconContainers.forEach(stairContainer => {
       stairContainer.onPointerDown(() => {
         this.onStairIconSelectedAsync(stairContainer);
       });
     });
-
-    this.hammer = this.createAndAddSprite('hammer');
 
     this.hammer.onPointerDown(async () => {
       await AnimationHelper.fadeOutAsync(this.hammer, 500);
@@ -98,29 +94,40 @@ export class Game {
   }
 
   async onStairIconSelectedAsync(selectedIconContainer) {
+    const appearedStairY = -100;
+    const animationDuration = 200;
+
     this.starIconContainers.forEach(iconContainer => iconContainer.deactivate());
     selectedIconContainer.activate();
 
-    const prevStair = this.selectedStair;
-    const selectedStairName = this.stairIconMap[selectedIconContainer.name];
-    const selectedStair = this.newStairs.filter(stair => stair.name == selectedStairName)[0];
-    selectedStair.y = -100;
-    this.selectedStair = selectedStair;
+    this.showOkButton(selectedIconContainer);
 
-    await AnimationHelper.fadeOutAsync(prevStair, 200);
-    await AnimationHelper.fadeInAsync(selectedStair, 200);
+    const prevStair = this.selectedStair;
+    const selectedNewStair = this.getNewStair(selectedIconContainer);
+    selectedNewStair.y = appearedStairY;
+    this.selectedStair = selectedNewStair;
+
+    await AnimationHelper.fadeOutAsync(prevStair, animationDuration);
+    await AnimationHelper.fadeInAsync(selectedNewStair, animationDuration);
 
     const newStairPos = getPositionByName('newStair');
-    await AnimationHelper.changePositionAsync(selectedStair, newStairPos, 200);
+    await AnimationHelper.changePositionAsync(selectedNewStair, newStairPos, animationDuration);
   }
 
-  hideOptions() {
-    this.changeVisibility(this.optionA, false);
-    this.changeVisibility(this.optionB, false);
-    this.changeVisibility(this.optionC, false);
+  showOkButton(selectedIconContainer) {
+    this.okButton.x = selectedIconContainer.iconX - 30;
+    this.okButton.y = selectedIconContainer.iconY + 120;
+    this.okButton.visible = true;
   }
 
-  changeVisibility(sprite, visibility) {
-    sprite.visible = visibility;
+  getNewStair(selectedIconContainer) {
+    const selectedStairName = this.stairIconMap[selectedIconContainer.name];
+    return this.newStairs.filter(stair => stair.name == selectedStairName)[0];
+  }
+
+  selectStair() {
+    this.starIconContainers.forEach(stairContainer => stairContainer.visible = false);
+    this.okButton.visible = false;
+    alert("Good Job!");
   }
 }
