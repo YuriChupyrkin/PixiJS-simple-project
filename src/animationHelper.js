@@ -1,4 +1,4 @@
-import { Ease, ease } from 'pixi-ease'
+import { ease } from 'pixi-ease'
 
 export function fadeInAsync(sprite, duration, animation = 'easeInOutQuad') {
   sprite.alpha = 0;

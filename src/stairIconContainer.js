@@ -1,5 +1,5 @@
 import { Container } from '@pixi/display';
-import { GameSprite } from "./gameSprite";
+import { GameSprite } from './gameSprite';
 
 export class StairIconContainer extends Container {
   constructor(x, y, texture, backgroundTexture, activeBackgroundTexture, name) {
@@ -8,7 +8,6 @@ export class StairIconContainer extends Container {
     this.iconX = x;
     this.iconY = y;
     this.name = name;
-
 
     const bgX = x - 24;
     const bgY = y;
