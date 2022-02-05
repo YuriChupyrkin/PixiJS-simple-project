@@ -88,3 +88,27 @@ export function pulseAsync(sprite, duration, animation = 'easeInOutQuad') {
     });
   });
 }
+
+export function pushAwayAsync(sprite, newPosition, duration, animation = 'easeInOutQuad') {
+  const pushAway = ease.add(
+    sprite,
+    {
+      position: {
+        x: newPosition.x,
+        y: newPosition.y
+      },
+      rotation: Math.PI * 2
+    },
+    {
+      repeat: false,
+      duration: duration,
+      ease: animation
+    }
+  );
+
+  return new Promise((resolve, reject) => {
+    pushAway.once('complete', () => {
+      resolve();
+    });
+  });
+}

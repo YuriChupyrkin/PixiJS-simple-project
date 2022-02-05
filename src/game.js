@@ -34,7 +34,8 @@ export class Game {
 
   run() {
     this.addStageChild(this.spriteBuilder.createSprite(Constants.BACKGROUND));
-    this.addStageChild(this.spriteBuilder.createTableContainer());
+    this.tableContainer = this.spriteBuilder.createTableContainer();
+    this.addStageChild(this.tableContainer);
 
     this.addStageChild(this.spriteBuilder.createSprite(Constants.AUSTIN));
     this.addStageChild(this.spriteBuilder.createSprite(Constants.LOGO));
@@ -71,7 +72,7 @@ export class Game {
   }
 
   handleEvents() {
-    this.okButton.onPointerDown(() => this.selectStair());
+    this.okButton.onPointerDown(() => this.selectStairAsync());
 
     this.starIconContainers.forEach(stairContainer => {
       stairContainer.onPointerDown(() => {
@@ -127,9 +128,10 @@ export class Game {
     return this.newStairs.filter(stair => stair.name == selectedStairName)[0];
   }
 
-  selectStair() {
+  async selectStairAsync() {
     this.starIconContainers.forEach(stairContainer => stairContainer.visible = false);
     this.okButton.visible = false;
-    alert('Good Job!');
+    await this.tableContainer.pushPlantAsync(1000);
+    alert('Godd Job!');
   }
 }
